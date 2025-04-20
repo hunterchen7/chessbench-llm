@@ -12,9 +12,10 @@ load_dotenv()
 
 def create_prompt(fen: str) -> str:
     position_summary = chess_utils.summarize_position(fen)
+    side = "white" if chess.Board(fen).turn == chess.WHITE else "black"
 
     return f"""
-You are a world-class chess grandmaster and you are playing a chess game.
+You are a world-class chess grandmaster and you are playing a chess game as {side}.
 
 These are the pieces on the board:
 
@@ -45,8 +46,8 @@ def send_prompt(prompt: str, model: str, server_url: str = "https://openrouter.a
 
     if response.status_code == 200:
         content = response.json()["choices"][0]["message"]["content"]
-        # print("Model response:")
-        # print(content.strip())
+        print("Model response:")
+        print(content.strip())
         return content.strip()
     else:
         print(f"Request failed with status code {response.status_code}")
@@ -60,10 +61,10 @@ def parse_move(fen: str, response: str) -> Optional[str]:
     for move in legal_moves:
         san = board.san(move)
         if san in response:
-            return move
+            return san
 
 
-def extract_move(response_text: str) -> str:
+def extract_move_scout(response_text: str) -> str:
     prompt = f"""You are an assistant that extracts the final chess move selected from a grandmaster-style explanation.
 
 The move must be in SAN (Standard Algebraic Notation), such as: e4, d4, Nf3, Nc6, O-O, Qxe5, etc.
@@ -80,7 +81,7 @@ Text:
 Final Move:"""
 
     response = requests.post(
-        "http://localhost:8000/api/v1/chat/completions",
+        "https://openrouter.ai/api/v1/chat/completions",
         headers={
             "Authorization": f"Bearer {os.getenv('OPENROUTER_API_KEY')}",
             "Content-Type": "application/json"
@@ -122,7 +123,7 @@ def extract_san_heuristically(response: str, fen: str) -> str:
 
 models = [
     "meta-llama/llama-4-maverick:free",
-    "google/gemma-3-27b-it:free",
+    "google/gemini-2.5-pro-preview-03-25",
 ]
 
 def sanitize_filename(s: str) -> str:
@@ -154,12 +155,14 @@ if __name__ == "__main__":
             print('prompting ', curr_model)
             response = send_prompt(prompt, curr_model)
             print('extracting move from response..')
-            move = extract_san_heuristically(response, board.fen())
+            san_move = parse_move(board.fen(), extract_move_scout(response))
+            print('extracted move:', san_move)
+            move = board.parse_san(san_move) if san_move else None
 
             if move is None:
                 print("Failed to extract a legal move. Game aborted.")
                 print("Model response:", response)
-                print("extracted move:", move)
+                print("extracted move:", san_move)
                 break
 
             try:
@@ -191,12 +194,12 @@ if __name__ == "__main__":
                     print(f"Result (due to illegal move): {board_result}")
                     print(f"\nGame data saved to {filename}")
                     break
-                san = board.san(move)
+
                 game_trace.append({
                     "turn": board.fullmove_number,
                     "side": "White" if board.turn == chess.WHITE else "Black",
                     "fen_before": board.fen(),
-                    "move": san,
+                    "move": san_move,
                     "response": response.strip(),
                 })
 
@@ -209,8 +212,8 @@ if __name__ == "__main__":
                     json.dump(game_data, f, indent=2)
 
                 board.push(move)
-                move_history.append(san)
-                print(f"Move played: {san}")
+                move_history.append(san_move)
+                print(f"Move played: {san_move}")
                 print(board)
             except Exception as e:
                 print(f"Error parsing move: {e}")
