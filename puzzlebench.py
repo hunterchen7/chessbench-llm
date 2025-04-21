@@ -23,10 +23,31 @@ models = [
     'openai/gpt-4.1-nano',
     # 'openai/o3-mini-high',
     # 'openai/o4-mini-high',
-    # 'meta-llama/llama-4-scout',
+    'openai/gpt-4.1',
+    'meta-llama/llama-4-scout',
     'meta-llama/llama-4-maverick',
     'qwen/qwen-max',
 ]
+
+# insert into db if not exists
+
+conn = psycopg2.connect(
+        dbname="matches",
+        user=os.getenv("MATCHES_DB_USER"),
+        password=os.getenv("MATCHES_DB_PASSWORD"),
+        host=os.getenv("MATCHES_DB_HOST"),
+    )
+
+with conn.cursor() as cur:
+    for model in models:
+        cur.execute("""
+            INSERT INTO players (name, rating) VALUES (%s, %s)
+            ON CONFLICT (name) DO NOTHING
+        """, (model, 800))
+    conn.commit()
+
+conn.close()
+
 
 # Load test puzzles
 # test_puzzles = select_puzzles
