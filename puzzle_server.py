@@ -48,6 +48,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
+"""
 # postgresql://chessbench_owner:npg_oNk9APW8uLbf@ep-curly-frost-a4aab9iv-pooler.us-east-1.aws.neon.tech/chessbench?sslmode=require
 
 # Database connection info
@@ -59,7 +60,6 @@ conn = psycopg2.connect(
 )
 cur = conn.cursor()
 
-"""
 # Create table if it doesn't exist
 cur.execute("""
 """CREATE TABLE IF NOT EXISTS puzzles (
@@ -82,8 +82,9 @@ execute_values(
     "INSERT INTO puzzles (id, fen, moves, rating) VALUES %s ON CONFLICT (id) DO NOTHING",
     records
 )
-"""
+
 
 conn.commit()
 cur.close()
 conn.close()
+"""

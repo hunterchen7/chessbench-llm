@@ -60,7 +60,7 @@ puzzles = parse_puzzles_from_csv("lichess_puzzles_small.csv")
 with open("puzzles_small.json", "w", encoding="utf-8") as f:
     json.dump(puzzles, f, indent=2)
 
-"""
+
 import csv
 import multiprocessing
 from collections import Counter
@@ -76,8 +76,8 @@ def process_chunk(lines):
     rating_counter = Counter()
     for line in lines:
         try:
-            rating = int(line["Rating"])
-            rating_bucket = (rating // 100) * 100  # group by 100s
+            rating = int(line["RatingDeviation"])
+            rating_bucket = rating  # group by 3s
             rating_counter[rating_bucket] += 1
         except (ValueError, KeyError):
             continue
@@ -111,8 +111,8 @@ if __name__ == "__main__":
 
     # Plot
     plt.figure(figsize=(14, 6))
-    plt.bar(x, y, width=45)
-    plt.title("Distribution of Lichess Puzzle Ratings")
+    plt.bar(x, y, width=4)
+    plt.title("Distribution of Lichess Rating Deviations")
     plt.xlabel("Rating")
     plt.ylabel("Number of Puzzles")
     plt.grid(axis="y")
@@ -121,4 +121,3 @@ if __name__ == "__main__":
     plt.xticks(x[::1 if len(x) < 30 else 2], rotation=45)  # dynamic spacing
     plt.tight_layout()
     plt.show()
-"""
