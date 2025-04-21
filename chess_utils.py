@@ -31,8 +31,8 @@ def summarize_position(fen: str) -> PositionSummary:
             chess.KNIGHT: "knight",
             chess.PAWN: "pawn",
         }
-        return ", ".join(
-            f"{names[ptype]} {', '.join(sorted(squares))}"
+        return "\n ".join(
+            f"- {names[ptype]}: {', '.join(sorted(squares))}"
             for ptype, squares in sorted(groups.items())
         )
     legal_moves: List[str] = [board.san(move) for move in board.legal_moves]
@@ -43,3 +43,5 @@ def summarize_position(fen: str) -> PositionSummary:
         "black_pieces": format_group(black_groups),
         "legal_moves": legal_moves,
     }
+
+print(summarize_position(chess.STARTING_FEN))

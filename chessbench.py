@@ -15,25 +15,34 @@ def create_prompt(fen: str) -> str:
     side = "white" if chess.Board(fen).turn == chess.WHITE else "black"
 
     return f"""
-You are a world-class chess grandmaster playing as {side}.
+You are tasked with playing the {side} pieces in the following chess position.
 
 The pieces on the board are arranged as follows:
 white pieces: {position_summary['white_pieces']}
 black pieces: {position_summary['black_pieces']}
 
-These are the legal moves you may make: {position_summary['legal_moves']}
+Your turn ({side} to move)
 
-You are to select the best move from the list of legal moves given.
+Legal moves: {position_summary['legal_moves']}
 
-Crucially, evaluate the position and consider the potential consequences of the move you are about to make.
-
-Look carefully for any potential checks, captures, or threats your opponent could make in response to your move.
-
-Also look carefully for tactics such as forks, pins, and skewers that could be used against you.
-
-To reiterate, your goal is to a find the strongest move that is legal, and to avoid blundering at all cost.
-
-Select exactly one move from the list of legal moves given, you may choose to briefly justify your choice.
+Your Objective: Select the single best move from the provided list.
+Analysis Process:
+1. Identify Candidate Moves: Briefly scan the list for active moves: checks, moves threatening mate, moves placing pieces on key squares. Also note moves that place your piece where it can be immediately captured.
+2. Mandatory Tactical Calculation (Highest Priority):
+ - For every candidate move identified in Step 1, especially checks or moves placing a piece en prise (where it can be captured):
+ - Calculate the opponent's primary responses. What are the forced replies? What happens if the opponent captures the piece you just moved?
+ - Evaluate the position after the opponent's likely reply.
+ - If your move places a piece en prise: Does the opponent capturing it lead to your checkmate shortly after? Does it lead to you winning more material than you lost? Does it gain a decisive, unavoidable advantage? If yes, this is a potential sacrifice.
+ - If your move places a piece en prise and the opponent capturing it simply results in you losing material with no significant compensation, this is a blunder. Eliminate this move from consideration.
+ - If your move is a check: Are all opponent responses safe for you? Does any response capture your checking piece? If yes, evaluate the consequences as described above (is it a sacrifice leading to mate, or a blunder?).
+3. Eliminate Blunders: Discard any move confirmed as a blunder in Step 2 (uncompensated loss of material or leading to a worse position).
+4. Compare Sound Candidates:
+ - Evaluate the remaining moves (safe moves and sound sacrifices).
+ - Prioritize forcing lines that lead to checkmate quickly (like a sound sacrifice leading to mate, or a check sequence leading to mate).
+ - If no immediate mate is found, choose the move that provides the greatest advantage safely.
+5. Final Selection:
+ - Choose exactly one move from the legal moves list that survived the tactical calculation and comparison.
+ - Briefly justify why it's the best move, potentially mentioning why other tempting (but flawed) options were rejected
 """
 
 import requests
@@ -128,7 +137,7 @@ def extract_san_heuristically(response: str, fen: str) -> str:
     return None
 
 models = [
-    "meta-llama/llama-4-maverick:free",
+    "openai/gpt-4.1-nano",
     "google/gemini-2.5-flash-preview",
 ]
 
@@ -161,7 +170,13 @@ if __name__ == "__main__":
             print('prompting ', curr_model)
             response = send_prompt(prompt, curr_model)
             print('extracting move from response..')
-            san_move = parse_move(board.fen(), extract_move_scout(response))
+
+            try:
+                san_move = parse_move(board.fen(), extract_move_scout(response))
+            except Exception as e:
+                print(f"Error during extraction with scout: {e}")
+                san_move = extract_san_heuristically(response, board.fen())
+
             print('extracted move:', san_move)
             move = board.parse_san(san_move) if san_move else None
 
@@ -212,6 +227,8 @@ if __name__ == "__main__":
                 })
 
                 game_data = {
+                    "white": white_model,
+                    "black": black_model,
                     "result": board.result() if board.is_game_over() else None,
                     "final_fen": board.fen(),
                     "moves": game_trace,
@@ -232,16 +249,22 @@ if __name__ == "__main__":
         print("Final FEN:", board.fen())
 
         print("\nMoves played:")
+        moves_played = ""
         for i in range(0, len(move_history), 2):
             move_num = i // 2 + 1
             white_move = move_history[i]
             black_move = move_history[i + 1] if i + 1 < len(move_history) else "—"
-            print(f"{move_num}. {white_move} {black_move}")
+            move = f"{move_num}. {white_move} {black_move}"
+            moves_played += move
+            print(move)
 
         game_data = {
+            "white": white_model,
+            "black": black_model,
             "result": board.result(),
             "final_fen": board.fen(),
             "moves": game_trace,
+            "san_moves": moves_played
         }
 
         with open(filename, "w", encoding="utf-8") as f:
