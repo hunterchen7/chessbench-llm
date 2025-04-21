@@ -1,0 +1,161 @@
+[
+  {
+    "puzzle_id": "00008",
+    "steps": [
+      {
+        "fen": "r6k/pp2r2p/4Rp1Q/3p4/8/1N1P2b1/PqP3PP/7K w - - 0 25",
+        "expected_uci": "e6e7",
+        "expected_san": "Rxe7"
+      },
+      {
+        "fen": "r6k/pp2R2p/5p1Q/3p4/8/1N1P2b1/P1P3PP/1q5K w - - 1 26",
+        "expected_uci": "b3c1",
+        "expected_san": "Nc1"
+      },
+      {
+        "fen": "r6k/pp2R2p/5p1Q/3p4/8/3P2b1/P1P3PP/2q4K w - - 0 27",
+        "expected_uci": "h6c1",
+        "expected_san": "Qxc1"
+      }
+    ],
+    "rating": 1848
+  },
+  {
+    "puzzle_id": "0000D",
+    "steps": [
+      {
+        "fen": "5rk1/1p3ppp/pq1Q1b2/8/8/1P3N2/P4PPP/3R2K1 b - - 3 27",
+        "expected_uci": "f8d8",
+        "expected_san": "Rd8"
+      },
+      {
+        "fen": "3Q2k1/1p3ppp/pq3b2/8/8/1P3N2/P4PPP/3R2K1 b - - 0 28",
+        "expected_uci": "f6d8",
+        "expected_san": "Bxd8"
+      }
+    ],
+    "rating": 1498
+  },
+  {
+    "puzzle_id": "0008Q",
+    "steps": [
+      {
+        "fen": "8/5R2/1p2P3/p4r2/P6p/1P3Pk1/4K3/8 b - - 2 64",
+        "expected_uci": "f5e5",
+        "expected_san": "Re5+"
+      },
+      {
+        "fen": "8/5R2/1p2P3/p3r3/P6p/1P3Pk1/8/5K2 b - - 4 65",
+        "expected_uci": "e5e6",
+        "expected_san": "Rxe6"
+      }
+    ],
+    "rating": 1339
+  },
+  {
+    "puzzle_id": "0009B",
+    "steps": [
+      {
+        "fen": "r2qr1k1/b1p2ppp/p5n1/P1p1p3/4P1n1/B2P2Pb/3NBP1P/RN1QR1K1 w - - 0 17",
+        "expected_uci": "e2g4",
+        "expected_san": "Bxg4"
+      },
+      {
+        "fen": "r2qr1k1/b1p2ppp/p5n1/P1p1p3/4P1b1/B2P2P1/3N1P1P/RN1QR1K1 w - - 0 18",
+        "expected_uci": "d1g4",
+        "expected_san": "Qxg4"
+      }
+    ],
+    "rating": 1080
+  },
+  {
+    "puzzle_id": "000VW",
+    "steps": [
+      {
+        "fen": "r4r2/1p3pkp/p7/3R1p1Q/3P4/8/P1q2P2/3R2K1 w - - 0 26",
+        "expected_uci": "d5c5",
+        "expected_san": "Rc5"
+      },
+      {
+        "fen": "r4r2/1p3pkp/p7/2R2p1Q/3Pq3/8/P4P2/3R2K1 w - - 2 27",
+        "expected_uci": "h5g5",
+        "expected_san": "Qg5+"
+      },
+      {
+        "fen": "r4r1k/1p3p1p/p7/2R2pQ1/3Pq3/8/P4P2/3R2K1 w - - 4 28",
+        "expected_uci": "g5f6",
+        "expected_san": "Qf6+"
+      }
+    ],
+    "rating": 2844
+  },
+  {
+    "puzzle_id": "000Vc",
+    "steps": [
+      {
+        "fen": "8/8/4k1p1/2KpP2P/5P2/8/8/8 b - - 0 53",
+        "expected_uci": "g6h5",
+        "expected_san": "gxh5"
+      },
+      {
+        "fen": "8/8/4k3/2KpPP1p/8/8/8/8 b - - 0 54",
+        "expected_uci": "e6e5",
+        "expected_san": "Kxe5"
+      },
+      {
+        "fen": "8/8/5P2/2Kpk2p/8/8/8/8 b - - 0 55",
+        "expected_uci": "e5f6",
+        "expected_san": "Kxf6"
+      }
+    ],
+    "rating": 1575
+  },
+  {
+    "puzzle_id": "000Zo",
+    "steps": [
+      {
+        "fen": "4r3/1k6/pp3P2/1b5p/3R1p2/P1R2P2/1P4PP/6K1 b - - 0 35",
+        "expected_uci": "e8e1",
+        "expected_san": "Re1+"
+      },
+      {
+        "fen": "8/1k6/pp3P2/1b5p/3R1p2/P1R2P2/1P3KPP/4r3 b - - 2 36",
+        "expected_uci": "e1f1",
+        "expected_san": "Rf1#"
+      }
+    ],
+    "rating": 1353
+  },
+  {
+    "puzzle_id": "000aY",
+    "steps": [
+      {
+        "fen": "r4rk1/pp2Bppp/2n1b3/q1pp4/8/P1Q2NP1/1PP1PP1P/2KR3R b - - 1 15",
+        "expected_uci": "a5c3",
+        "expected_san": "Qxc3"
+      },
+      {
+        "fen": "r4rk1/pp2Bppp/2n1b3/2pp4/8/P1P2NP1/2P1PP1P/2KR3R b - - 0 16",
+        "expected_uci": "c6e7",
+        "expected_san": "Nxe7"
+      }
+    ],
+    "rating": 1440
+  },
+  {
+    "puzzle_id": "000hf",
+    "steps": [
+      {
+        "fen": "r1bq3r/pp1nbkp1/2p1p2p/8/2BP4/1PN3P1/P3QP1P/3R1RK1 w - - 0 20",
+        "expected_uci": "e2e6",
+        "expected_san": "Qxe6+"
+      },
+      {
+        "fen": "r1bq1k1r/pp1nb1p1/2p1Q2p/8/2BP4/1PN3P1/P4P1P/3R1RK1 w - - 1 21",
+        "expected_uci": "e6f7",
+        "expected_san": "Qf7#"
+      }
+    ],
+    "rating": 1450
+  }
+]
