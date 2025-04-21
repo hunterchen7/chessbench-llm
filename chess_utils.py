@@ -49,7 +49,7 @@ def summarize_position(fen: str, san = True) -> PositionSummary:
         "legal_moves": legal_moves if san else [str(move) for move in board.legal_moves],
     }
 
-print(summarize_position(chess.STARTING_FEN, san=False))
+# print(summarize_position(chess.STARTING_FEN, san=False))
 
 def create_prompt(fen: str, san = True) -> str:
     position_summary = summarize_position(fen, san)
@@ -140,7 +140,7 @@ Final Move:"""
             "Content-Type": "application/json"
         },
         json={
-            "model": "meta-llama/llama-4-scout:free",
+            "model": "meta-llama/llama-4-scout",
             "messages": [
                 {"role": "user", "content": prompt}
             ]
@@ -177,7 +177,7 @@ def extract_san_heuristically(response: str, fen: str) -> str:
 def extract_move(response: str, fen: str) -> Optional[str]:
     # First try the scout model
     try:
-        return extract_move_scout(response)
+        return parse_move(fen, extract_move_scout(response))
     except Exception as e:
         print(f"Scout extraction failed: {e}")
 
@@ -203,6 +203,14 @@ def compute_outcome(player_moves, correct_moves_list):
 def expected_score(player_rating: int, puzzle_rating: int) -> float:
     return 1 / (1 + 10 ** ((puzzle_rating - player_rating) / 400))
 
-def rating_change(player_rating: int, puzzle_rating: int, outcome: float, K=32) -> float:
+def get_k(num_matches_played, start_k=256, min_k=16, decay_cap=12):
+    if num_matches_played >= decay_cap:
+        return min_k
+    # Linearly decay from start_k to min_k over `decay_cap` games
+    decay_rate = (start_k - min_k) / decay_cap
+    return round(start_k - decay_rate * num_matches_played)
+
+def rating_change(player_rating: int, puzzle_rating: int, outcome: float, matches_played: int) -> float:
+    K = get_k(matches_played)
     expected = expected_score(player_rating, puzzle_rating)
     return K * (outcome - expected)

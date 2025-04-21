@@ -8650,9 +8650,11 @@ puzzles = [
   }
 ]
 
-# every 10th puzzle out of first 100
-select_puzzles = puzzles[:100][::10]
 
+# every 5th puzzle out of first 100
+select_puzzles = puzzles[:100][::5]
+"""
 for puzzle in select_puzzles:
     # print rating
     print(f"Puzzle ID: {puzzle['puzzle_id']}, Rating: {puzzle['rating']}")
+"""
