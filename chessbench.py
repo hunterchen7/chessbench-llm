@@ -15,19 +15,25 @@ def create_prompt(fen: str) -> str:
     side = "white" if chess.Board(fen).turn == chess.WHITE else "black"
 
     return f"""
-You are a world-class chess grandmaster and you are playing a chess game as {side}.
+You are a world-class chess grandmaster playing as {side}.
 
-These are the pieces on the board:
-
+The pieces on the board are arranged as follows:
 white pieces: {position_summary['white_pieces']}
-
 black pieces: {position_summary['black_pieces']}
 
-These are the legal moves you may make:
+These are the legal moves you may make: {position_summary['legal_moves']}
 
-legal moves: {position_summary['legal_moves']}
+You are to select the best move from the list of legal moves given.
 
-Select exactly one move from the list of legal moves given.
+Crucially, evaluate the position and consider the potential consequences of the move you are about to make.
+
+Look carefully for any potential checks, captures, or threats your opponent could make in response to your move.
+
+Also look carefully for tactics such as forks, pins, and skewers that could be used against you.
+
+To reiterate, your goal is to a find the strongest move that is legal, and to avoid blundering at all cost.
+
+Select exactly one move from the list of legal moves given, you may choose to briefly justify your choice.
 """
 
 import requests
@@ -123,7 +129,7 @@ def extract_san_heuristically(response: str, fen: str) -> str:
 
 models = [
     "meta-llama/llama-4-maverick:free",
-    "google/gemini-2.5-pro-preview-03-25",
+    "google/gemini-2.5-flash-preview",
 ]
 
 def sanitize_filename(s: str) -> str:
@@ -175,6 +181,7 @@ if __name__ == "__main__":
                         "side": "White" if board.turn == chess.WHITE else "Black",
                         "fen_before": board.fen(),
                         "move": "ILLEGAL",
+                        "prompt": prompt,
                         "response": response.strip(),
                         "note": "Illegal move"
                     })
@@ -200,6 +207,7 @@ if __name__ == "__main__":
                     "side": "White" if board.turn == chess.WHITE else "Black",
                     "fen_before": board.fen(),
                     "move": san_move,
+                    "prompt": prompt,
                     "response": response.strip(),
                 })
 
