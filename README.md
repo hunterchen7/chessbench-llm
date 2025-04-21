@@ -2,6 +2,8 @@ Puzzles:
 
 use `puzzlebench.py` to run some benchmarks, i have a postgres db set up elsewhere where the results get pushed
 
+starting Elo for matches.json was 1500, i'm lowering to 800.
+
 i want to play around more with the prompt, to see if i can get more performance out of it and stop the models from making super obvious mistakes, like hanging pieces in 1, etc
 
 i've noticed that a bunch of times it'll go for a check which hangs the piece at the same time, it's a little strange (even in the strongest models, Gemini 2.5 Pro Preview, etc)
