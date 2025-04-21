@@ -1,8 +1,9 @@
 import os
 import psycopg2
-from concurrent.futures import ThreadPoolExecutor, as_completed
+from concurrent.futures import ThreadPoolExecutor
 from dotenv import load_dotenv
-from chess_utils import create_prompt, extract_move, send_prompt, rating_change, compute_outcome
+from chess_utils import extract_move, rating_change, compute_outcome
+from prompt_utils import create_puzzle_prompt, send_prompt
 # from puzzles_small import select_puzzles
 from puzzle_server import get_random_puzzle
 from psycopg2.extras import Json
@@ -13,7 +14,7 @@ load_dotenv()
 
 # Define models and insert them with default rating
 models = [
-    'qwen/qwq-32b',
+    # 'qwen/qwq-32b',
     'deepseek/deepseek-chat-v3-0324',
     # 'deepseek/deepseek-r1',
     'google/gemini-2.0-flash-lite-001',
@@ -22,8 +23,9 @@ models = [
     'openai/gpt-4.1-nano',
     # 'openai/o3-mini-high',
     # 'openai/o4-mini-high',
-    'meta-llama/llama-4-scout',
+    # 'meta-llama/llama-4-scout',
     'meta-llama/llama-4-maverick',
+    'qwen/qwen-max',
 ]
 
 # Load test puzzles
@@ -62,7 +64,7 @@ def run_model_on_puzzle(model, puzzle, conn):
             fen = step['fen']
             expected_san = step['expected_san']
 
-            prompt = create_prompt(fen)
+            prompt = create_puzzle_prompt(fen)
             res = send_prompt(prompt, model)
             responses.append(res)
             move = extract_move(res, fen)
@@ -97,7 +99,7 @@ def run_model_on_puzzle(model, puzzle, conn):
             """, (round(model_rating + delta, 1), model))
             conn.commit()
 
-        return f"{model} finished {puzzle_id} (Δ={delta})"
+        return f"{model} finished puzzle {puzzle_id} (Δ={delta})"
     except Exception as e:
         return f"Error for {model} on {puzzle_id}: {e}"
 
@@ -136,6 +138,7 @@ def run_model_thread(model, N: int = 32, RATING_TOLERANCE: int = 50):
 
         seen.add(candidate["puzzle_id"])
         puzzles_done += 1
+        print(f"Completed {puzzles_done}/{N} puzzles for {model}")
 
     conn.close()
 
