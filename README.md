@@ -1,3 +1,13 @@
+Puzzles:
+
+use `puzzlebench.py` to run some benchmarks, i have a postgres db set up elsewhere where the results get pushed
+
+i want to play around more with the prompt, to see if i can get more performance out of it and stop the models from making super obvious mistakes, like hanging pieces in 1, etc
+
+i've noticed that a bunch of times it'll go for a check which hangs the piece at the same time, it's a little strange (even in the strongest models, Gemini 2.5 Pro Preview, etc)
+
+another thing is i think giving it SAN notation makes it stronger than UCI notation, since the `+` and `#` notation makes it want to play those moves more, not sure if it also likes captures too (`x`)
+
 - `uvicorn llm_server:app --host 0.0.0.0 --port 8000` to start the server
 - `python chessbench.py` to make the server play against itself
 
