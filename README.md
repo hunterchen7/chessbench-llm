@@ -1,3 +1,5 @@
+puzzles from: https://database.lichess.org/#puzzles
+
 Puzzles:
 
 use `puzzlebench.py` to run some benchmarks, i have a postgres db set up elsewhere where the results get pushed
@@ -16,6 +18,8 @@ i'm not made of money so i'm not running O3, gemini 2.5 pro preview hurts enough
 
 - `uvicorn llm_server:app --host 0.0.0.0 --port 8000` to start the server
 - `python chessbench.py` to make the server play against itself
+
+there are some random games played by different models stored as jsons, the format kinda sucks but it's not too hard to parse (not my problem if you want to look at them)
 
 this is a game that Qwen2.5-1.5B-instruct "played" against itself.
 
