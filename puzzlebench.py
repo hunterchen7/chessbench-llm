@@ -15,7 +15,7 @@ load_dotenv()
 # Define models and insert them with default rating
 models = [
     # 'qwen/qwq-32b',
-    'deepseek/deepseek-chat-v3-0324',
+    # 'deepseek/deepseek-chat-v3-0324',
     # 'deepseek/deepseek-r1',
     'google/gemini-2.0-flash-lite-001',
     'google/gemini-2.5-flash-preview',
@@ -124,7 +124,7 @@ def run_model_on_puzzle(model, puzzle, conn):
     except Exception as e:
         return f"Error for {model} on {puzzle_id}: {e}"
 
-def run_model_thread(model, N: int = 32, RATING_TOLERANCE: int = 50):
+def run_model_thread(model, N: int = 68, RATING_TOLERANCE: int = 50):
     print(f"Starting thread for {model}...")
     conn = psycopg2.connect(
         dbname="matches",
