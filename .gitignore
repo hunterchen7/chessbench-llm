@@ -1,6 +1,13 @@
-/__pycache__
-.env
-tempCodeRunnerFile.py
-lichess_puzzles_mega.csv
-lichess_puzzles_trimmed.csv
-lichess_puzzles_1000_plays.csv
+# Local
+.DS_Store
+*.local
+*.log*
+
+# Dist
+node_modules
+dist/
+
+# IDE
+.vscode/*
+!.vscode/extensions.json
+.idea
