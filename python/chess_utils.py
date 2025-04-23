@@ -79,7 +79,9 @@ def extract_san_heuristically(response: str, fen: str) -> str:
 def extract_move(response: str, fen: str) -> Optional[str]:
     # First try the scout model
     try:
-        return parse_move(fen, extract_move_scout(response))
+        extracted_move = parse_move(fen, extract_move_scout(response))
+        if extracted_move:
+            return extracted_move
     except Exception as e:
         print(f"Scout extraction failed: {e}")
 

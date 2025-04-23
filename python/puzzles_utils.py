@@ -55,10 +55,10 @@ def parse_puzzles_from_csv(csv_file):
 
     return all_puzzles
 
-puzzles = parse_puzzles_from_csv("lichess_puzzles_small.csv")
+# puzzles = parse_puzzles_from_csv("lichess_puzzles_small.csv")
 
-with open("puzzles_small.json", "w", encoding="utf-8") as f:
-    json.dump(puzzles, f, indent=2)
+# with open("puzzles_small.json", "w", encoding="utf-8") as f:
+#    json.dump(puzzles, f, indent=2)
 
 
 import csv
@@ -67,7 +67,7 @@ from collections import Counter
 import matplotlib.pyplot as plt
 from tqdm import tqdm
 
-CSV_PATH = "lichess_puzzles_mega.csv"
+CSV_PATH = "lichess_puzzles_1000_plays.csv"
 # CSV_PATH = "lichess_puzzles_small.csv"
 NUM_WORKERS = multiprocessing.cpu_count()
 CHUNK_SIZE = 100_000
@@ -76,8 +76,8 @@ def process_chunk(lines):
     rating_counter = Counter()
     for line in lines:
         try:
-            rating = int(line["RatingDeviation"])
-            rating_bucket = rating  # group by 3s
+            rating = int(line["Rating"])
+            rating_bucket = rating // 20 * 20
             rating_counter[rating_bucket] += 1
         except (ValueError, KeyError):
             continue
@@ -106,12 +106,13 @@ if __name__ == "__main__":
 
     # Sort and prepare
     sorted_ratings = sorted(total_counts.items())
+    print(sorted_ratings)
     x = [r for r, _ in sorted_ratings]
     y = [c for _, c in sorted_ratings]
 
     # Plot
     plt.figure(figsize=(14, 6))
-    plt.bar(x, y, width=4)
+    plt.bar(x, y, width=10)
     plt.title("Distribution of Lichess Rating Deviations")
     plt.xlabel("Rating")
     plt.ylabel("Number of Puzzles")

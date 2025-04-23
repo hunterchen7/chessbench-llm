@@ -46,43 +46,44 @@ load_dotenv()
 
 # postgresql://chessbench_owner:npg_oNk9APW8uLbf@ep-curly-frost-a4aab9iv-pooler.us-east-1.aws.neon.tech/chessbench?sslmode=require
 
-# Database connection info
-conn = psycopg2.connect(
-    dbname="matches",
-    user=os.getenv("MATCHES_DB_USER"),
-    password=os.getenv("MATCHES_DB_PASSWORD"),
-    host=os.getenv("MATCHES_DB_HOST"),
-)
-cur = conn.cursor()
-
-# Create table if it doesn't exist
-cur.execute(
-"""CREATE TABLE IF NOT EXISTS puzzles (
-    id TEXT PRIMARY KEY,
-    fen TEXT NOT NULL,
-    moves TEXT NOT NULL,
-    rating INTEGER NOT NULL
-)"""
-)
-
-# Load the trimmed CSV
-df = pd.read_csv("lichess_puzzles_1000_plays.csv")
-
-# Prepare data
-records = list(df.itertuples(index=False, name=None))
-
-# Bulk insert
-chunk_size = 3000
-for i in range(0, len(records), chunk_size):
-    chunk = records[i:i + chunk_size]
-    execute_values(
-        cur,
-        "INSERT INTO puzzles (id, fen, moves, rating) VALUES %s ON CONFLICT (id) DO NOTHING",
-        chunk
+if __name__ == "__main__":
+    # Database connection info
+    conn = psycopg2.connect(
+        dbname="matches",
+        user=os.getenv("MATCHES_DB_USER"),
+        password=os.getenv("MATCHES_DB_PASSWORD"),
+        host=os.getenv("MATCHES_DB_HOST"),
     )
-    conn.commit()
-    print(f"{i}. Inserted {len(chunk)} records into the database.")
+    cur = conn.cursor()
 
-cur.close()
-conn.close()
+    # Create table if it doesn't exist
+    cur.execute(
+    """CREATE TABLE IF NOT EXISTS puzzles (
+        id TEXT PRIMARY KEY,
+        fen TEXT NOT NULL,
+        moves TEXT NOT NULL,
+        rating INTEGER NOT NULL
+    )"""
+    )
+
+    # Load the trimmed CSV
+    df = pd.read_csv("lichess_puzzles_1000_plays.csv")
+
+    # Prepare data
+    records = list(df.itertuples(index=False, name=None))
+
+    # Bulk insert
+    chunk_size = 3000
+    for i in range(0, len(records), chunk_size):
+        chunk = records[i:i + chunk_size]
+        execute_values(
+            cur,
+            "INSERT INTO puzzles (id, fen, moves, rating) VALUES %s ON CONFLICT (id) DO NOTHING",
+            chunk
+        )
+        conn.commit()
+        print(f"{i}. Inserted {len(chunk)} records into the database.")
+
+    cur.close()
+    conn.close()
 
