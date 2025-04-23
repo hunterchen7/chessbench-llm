@@ -18,10 +18,10 @@ def get_random_puzzle(min_rating: int = Query(0), max_rating: int = Query(3000))
     row = filtered.sample(n=1).iloc[0]
     return parse_puzzle(row)
 
-"""
 import pandas as pd
 
-# Load only the necessary columns
+
+"""# Load only the necessary columns
 cols = ["PuzzleId","FEN", "Moves", "Rating", "NbPlays"]
 df = pd.read_csv("lichess_puzzles_mega.csv", usecols=cols)
 
@@ -33,7 +33,7 @@ df["Rating"] = df["Rating"].astype(int)
 df = df[["PuzzleId", "FEN", "Moves", "Rating"]]
 
 # Save to new CSV
-df.to_csv("lichess_puzzles_1000_plays.csv", index=False)
+df.to_csv("lichess_puzzles_1000_plays.csv", index=False)"""
 
 
 import pandas as pd
@@ -44,43 +44,45 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-
 # postgresql://chessbench_owner:npg_oNk9APW8uLbf@ep-curly-frost-a4aab9iv-pooler.us-east-1.aws.neon.tech/chessbench?sslmode=require
 
 # Database connection info
 conn = psycopg2.connect(
-    dbname="chessbench",
-    user=os.getenv("DB_USER"),
-    password=os.getenv("DB_PASSWORD"),
-    host=os.getenv("DB_HOST"),
+    dbname="matches",
+    user=os.getenv("MATCHES_DB_USER"),
+    password=os.getenv("MATCHES_DB_PASSWORD"),
+    host=os.getenv("MATCHES_DB_HOST"),
 )
 cur = conn.cursor()
 
 # Create table if it doesn't exist
-cur.execute("""
+cur.execute(
 """CREATE TABLE IF NOT EXISTS puzzles (
     id TEXT PRIMARY KEY,
     fen TEXT NOT NULL,
     moves TEXT NOT NULL,
     rating INTEGER NOT NULL
 )"""
-""")
+)
 
 # Load the trimmed CSV
-df = pd.read_csv("lichess_puzzles_trimmed.csv")
+df = pd.read_csv("lichess_puzzles_1000_plays.csv")
 
 # Prepare data
 records = list(df.itertuples(index=False, name=None))
 
 # Bulk insert
-execute_values(
-    cur,
-    "INSERT INTO puzzles (id, fen, moves, rating) VALUES %s ON CONFLICT (id) DO NOTHING",
-    records
-)
+chunk_size = 3000
+for i in range(0, len(records), chunk_size):
+    chunk = records[i:i + chunk_size]
+    execute_values(
+        cur,
+        "INSERT INTO puzzles (id, fen, moves, rating) VALUES %s ON CONFLICT (id) DO NOTHING",
+        chunk
+    )
+    conn.commit()
+    print(f"{i}. Inserted {len(chunk)} records into the database.")
 
-
-conn.commit()
 cur.close()
 conn.close()
-"""
+
