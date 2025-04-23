@@ -59,7 +59,7 @@ const PlayerPuzzles = ({ player }: { player: string }) => {
           {
             puzzles.map((puzzle) => (
               <tr key={puzzle.id} className="hover:bg-gray-700 border border-gray-700">
-                <td className="px-4 py-2 border-r border-gray-700">{puzzle.id}</td>
+                <td className="px-4 py-2 border-r border-gray-700">{puzzle.puzzle}</td>
                 <td className="px-4 py-2 text-center border-r border-gray-700">{puzzle.rating_change}</td>
                 <td className="px-4 py-2 text-center">{toLocaleString(puzzle.time)}</td>
               </tr>
