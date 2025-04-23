@@ -19,5 +19,5 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true
   },
-  "include": ["src"]
+  "include": ["src", "src/index.tsx", "src/Matches.tsx", "src/Puzzles.tsx", "rsbuild.config.ts"]
 }
