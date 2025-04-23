@@ -1,14 +1,61 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Modal from "./components/Modal";
+import { fetchWithPrefix as fetch } from "./utils/fetch";
+
+interface Player {
+  name: string;
+  rating: number;
+  puzzles_played: number;
+}
 
 const Puzzles = () => {
   const [methodology, setMethodology] = useState(false);
+  const [players, setPlayers] = useState<Player[]>([]);
+
+  useEffect(() => {
+    const fetchPlayers = async () => {
+      try {
+        const response = await fetch('/api/chessbench/players');
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        setPlayers(data);
+      } catch (error) {
+        console.error('Error fetching players:', error);
+      }
+    };
+
+    fetchPlayers();
+  }, []);
 
   return (
     <div className="flex flex-col items-center justify-center">
       <h1 className="text-2xl font-bold my-4">Puzzles Leaderboard</h1>
       <div className="text-lg mb-4 underline hover:cursor-pointer hover:text-gray-300" onClick={() => setMethodology(true)}>
         view methodology
+      </div>
+      <div className="overflow-x-auto w-full">
+        <table className="min-w-1/2 mx-auto bg-gray-800 text-white">
+          <thead>
+            <tr>
+              <th className="px-4 py-2">Model</th>
+              <th className="px-4 py-2">Elo</th>
+              <th className="px-4 py-2">Puzzles Played</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              players.map((player) => (
+                <tr key={player.name} className="hover:bg-gray-700">
+                  <td className="px-4 py-2">{player.name}</td>
+                  <td className="px-4 py-2">{player.rating}</td>
+                  <td className="px-4 py-2 text-center">{player.puzzles_played}</td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
       </div>
       {
         methodology && (
