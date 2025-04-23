@@ -60,7 +60,12 @@ export default {
 				}
 
 				const matches = await sql`
-					SELECT * FROM matches WHERE player = ${playerId}
+					SELECT
+						matches.*,
+						puzzles.rating AS puzzle_rating
+					FROM matches
+					JOIN puzzles ON matches.puzzle = puzzles.id
+					WHERE matches.player = ${playerId}
 				`;
 				return withCors(Response.json(matches));
 			} catch (err: any) {

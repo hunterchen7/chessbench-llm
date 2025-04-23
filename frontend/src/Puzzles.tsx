@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Modal from "./components/Modal";
 import { fetchWithPrefix as fetch } from "./utils/fetch";
+import PlayerPuzzles from "./components/Puzzles";
 
 interface Player {
   name: string;
@@ -11,6 +12,7 @@ interface Player {
 const Puzzles = () => {
   const [methodology, setMethodology] = useState(false);
   const [players, setPlayers] = useState<Player[]>([]);
+  const [selectedPlayer, setSelectedPlayer] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchPlayers = async () => {
@@ -36,20 +38,27 @@ const Puzzles = () => {
         view methodology
       </div>
       <div className="overflow-x-auto w-full">
-        <table className="min-w-1/2 mx-auto bg-gray-800 text-white">
+        <table className="min-w-1/2 mx-auto bg-gray-800 text-white border border-gray-700">
           <thead>
             <tr>
-              <th className="px-4 py-2">Model</th>
-              <th className="px-4 py-2">Elo</th>
+              <th className="px-4 py-2 border-r border-gray-700">Model</th>
+              <th className="px-4 py-2 border-r border-gray-700">Elo</th>
               <th className="px-4 py-2">Puzzles Played</th>
             </tr>
           </thead>
           <tbody>
             {
               players.map((player) => (
-                <tr key={player.name} className="hover:bg-gray-700">
-                  <td className="px-4 py-2">{player.name}</td>
-                  <td className="px-4 py-2">{player.rating}</td>
+                <tr key={player.name} className="hover:bg-gray-700 border border-gray-700">
+                  <td className="px-4 py-2 border-r border-gray-700">
+                    <div className="cursor-pointer hover:text-gray-400 underline transition-all w-fit"
+                      onClick={() => {
+                        setSelectedPlayer(player.name);
+                      }}>
+                      {player.name}
+                    </div>
+                  </td>
+                  <td className="px-4 py-2 text-center border-r border-gray-700">{player.rating}</td>
                   <td className="px-4 py-2 text-center">{player.puzzles_played}</td>
                 </tr>
               ))
@@ -98,6 +107,16 @@ const Puzzles = () => {
                   <li>There is no consideration for puzzle rating deviation, and Elo is a fairly flawed rating system compared to Glicko and the likes, but it was used for simplicity sake.</li>
                 </ul>
               </p>
+            </div>
+          </Modal>
+        )
+      }
+      {
+        selectedPlayer && (
+          <Modal isOpen={!!selectedPlayer} onClose={() => setSelectedPlayer(null)}>
+            <div className="text-md text-left bg-gray-600 p-4 rounded-lg mx-auto">
+              <h2 className="text-lg font-bold mb-2">{selectedPlayer}</h2>
+              <PlayerPuzzles player={selectedPlayer} />
             </div>
           </Modal>
         )
