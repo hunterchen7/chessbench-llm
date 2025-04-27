@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Modal from "./components/Modal";
 import { fetchWithPrefix as fetch } from "./utils/fetch";
 import PlayerPuzzles from "./components/Puzzles";
+import { LineChart, Line, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, Brush } from 'recharts';
 
 interface Player {
   name: string;
@@ -9,10 +10,21 @@ interface Player {
   puzzles_played: number;
 }
 
+interface PlayerRatings {
+  name: string;
+  ratings: number[];
+}
+
+const COLOURS = [
+  "#8884d8", "#82ca9d", "#ffc658", "#ff7300", "#00c49f", "#0088fe",
+  "#d0ed57", "#a28fd0", "#f75f5f", "#4caf50", "#e91e63", "#ff9800"
+]
+
 const Puzzles = () => {
   const [methodology, setMethodology] = useState(false);
   const [players, setPlayers] = useState<Player[]>([]);
   const [selectedPlayer, setSelectedPlayer] = useState<string | null>(null);
+  const [playerRatings, setPlayerRatings] = useState<PlayerRatings[]>([]);
 
   useEffect(() => {
     const fetchPlayers = async () => {
@@ -28,8 +40,35 @@ const Puzzles = () => {
       }
     };
 
+    const fetchRatingHistories = async () => {
+      try {
+        const response = await fetch('/api/chessbench/rating-history');
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        setPlayerRatings(data);
+      } catch (error) {
+        console.error('Error fetching players:', error);
+      }
+    }
+
     fetchPlayers();
+    fetchRatingHistories();
   }, []);
+
+  const maxMatches = Math.max(...playerRatings.map(d => d.ratings.length));
+  const chartData: { index: number;[player: string]: number }[] = [];
+
+  for (let i = 0; i < maxMatches; i++) {
+    const point: { index: number;[player: string]: number } = { index: i };
+    for (const player of playerRatings) {
+      if (player.ratings[i] !== undefined) {
+        point[player.name] = player.ratings[i];
+      }
+    }
+    chartData.push(point);
+  }
 
   return (
     <div className="flex flex-col items-center justify-center">
@@ -66,6 +105,27 @@ const Puzzles = () => {
           </tbody>
         </table>
       </div>
+      <div className="text-lg mb-4">
+        History of Elo ratings, note that there are rounding errors so the history chart is not exact.
+      </div>
+      <ResponsiveContainer width={"80%"} height={400}>
+        <LineChart data={chartData}>
+          <XAxis dataKey="index" />
+          <YAxis />
+          <Tooltip />
+          <Legend />
+          {playerRatings.map((player) => (
+            <Line
+              key={player.name}
+              type="linear"
+              stroke={COLOURS[playerRatings.indexOf(player) % 12]}
+              dataKey={player.name}
+              dot={false}
+            />
+          ))}
+          <Brush dataKey="index" height={30} />
+        </LineChart>
+      </ResponsiveContainer>
       {
         methodology && (
           <Modal isOpen={methodology} onClose={() => setMethodology(false)}>

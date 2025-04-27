@@ -49,8 +49,6 @@ def summarize_position(fen: str, san = True) -> PositionSummary:
         "legal_moves": legal_moves if san else [str(move) for move in board.legal_moves],
     }
 
-# print(summarize_position(chess.STARTING_FEN, san=False))
-
 def create_prompt(fen: str, san = True) -> str:
     position_summary = summarize_position(fen, san)
     side = "white" if chess.Board(fen).turn == chess.WHITE else "black"

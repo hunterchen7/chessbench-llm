@@ -17,6 +17,7 @@
 		"wrangler": "^4.13.0"
 	},
 	"dependencies": {
-		"@neondatabase/serverless": "^1.0.0"
+		"@neondatabase/serverless": "^1.0.0",
+		"chess.js": "^1.2.0"
 	}
 }

@@ -13,6 +13,6 @@ response = requests.get(
 
 print(json.dumps(response.json(), indent=2))
 
-from chessbench import create_prompt
+from prompt_utils import create_prompt
 
 print(create_prompt('3K4/8/8/p7/k7/8/8/2q5 b - - 1 52'))

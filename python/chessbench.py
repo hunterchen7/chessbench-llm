@@ -5,7 +5,6 @@ from typing import List, Tuple
 import time
 import json
 
-
 models = [
     "openai/gpt-4.1-nano",
     "google/gemini-2.5-flash-preview",

@@ -10,6 +10,8 @@ from psycopg2.extras import Json
 
 load_dotenv()
 
+PUZZLES = 47
+
 # Connect to Postgres
 
 # Define models and insert them with default rating
@@ -23,11 +25,11 @@ models = [
     # 'openai/gpt-4.1-nano',
     # 'openai/o3-mini-high',
     # 'openai/o4-mini-high',
-    # 'openai/gpt-4.1',
+    'openai/gpt-4.1',
     # 'meta-llama/llama-4-scout',
     # 'meta-llama/llama-4-maverick',
-    # 'qwen/qwen-max',
-    'openai/gpt-4.1-mini',
+    'qwen/qwen-max',
+    # 'openai/gpt-4.1-mini',
     'x-ai/grok-3-mini-beta',
     'x-ai/grok-3-beta',
     'anthropic/claude-3.7-sonnet',
@@ -128,7 +130,7 @@ def run_model_on_puzzle(model, puzzle, conn):
     except Exception as e:
         return f"Error for {model} on {puzzle_id}: {e}"
 
-def run_model_thread(model, N: int = 68, RATING_TOLERANCE: int = 50):
+def run_model_thread(model, N: int = PUZZLES, RATING_TOLERANCE: int = 50):
     print(f"Starting thread for {model}...")
     conn = psycopg2.connect(
         dbname="matches",
