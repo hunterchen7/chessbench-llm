@@ -29,7 +29,7 @@ const Puzzles = () => {
   useEffect(() => {
     const fetchPlayers = async () => {
       try {
-        const response = await fetch('/api/chessbench/players');
+        const response = await fetch('/players');
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
@@ -42,7 +42,7 @@ const Puzzles = () => {
 
     const fetchRatingHistories = async () => {
       try {
-        const response = await fetch('/api/chessbench/rating-history');
+        const response = await fetch('/rating-history');
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
