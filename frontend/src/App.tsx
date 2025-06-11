@@ -5,7 +5,7 @@ import Puzzles from './Puzzles';
 import Matches from './Matches';
 import { Chessboard } from 'react-chessboard';
 import { Chess } from 'chess.js';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { fetchWithPrefix as fetch } from './utils/fetch';
 
 const App = () => {
