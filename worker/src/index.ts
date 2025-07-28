@@ -170,7 +170,7 @@ export default {
 			}
 		}
 
-		const MODEL = 'meta-llama/llama-4-scout:free';
+		const MODEL = 'meta-llama/llama-4-scout';
 		if (url.pathname.startsWith('/api/chessbench/ai-move')) {
 			try {
 				const fen = decodeURIComponent(url.searchParams.get('fen') || '');

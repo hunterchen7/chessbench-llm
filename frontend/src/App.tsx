@@ -50,7 +50,7 @@ const App = () => {
           <div className='flex'>
             <div className='flex flex-col w-[80vh]'>
               <div className="text-lg text-center">
-                Play a game against <span className='font-mono bg-gray-800 px-1 rounded'>meta-llama/llama-4-scout:free</span></div>
+                Play a game against <span className='font-mono bg-gray-800 px-1 rounded'>meta-llama/llama-4-scout</span></div>
               <Chessboard position={game.fen()} onPieceDrop={onDrop} />
             </div>
             <div>
