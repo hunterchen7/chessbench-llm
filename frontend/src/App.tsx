@@ -23,7 +23,7 @@ const App = () => {
     setIsAIThinking(true);
 
     // prompt the AI to make a move
-    fetch('ai-move?fen=' + game.fen())
+    fetch('/ai-move?fen=' + game.fen())
       .then((response) => {
         if (!response.ok) {
           throw new Error('Network response was not ok');
